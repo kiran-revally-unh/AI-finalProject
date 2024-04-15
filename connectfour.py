@@ -17,6 +17,61 @@ board   = [[-1] * N for _ in range(N)]    # Board representation
 qVals   = {}                              # Cache qVals
 vals    = {}                              # Vals of states
 
+
+
+class TicTacToe():
+    def __init__(self):
+        self.gameState = GameState(T, board, actions)
+        self.states = [self.gameState]
+        N = int(input("Enter Size of Tic-Tac-Toe Grid: "))
+        while(N < 3):
+            print("ERROR: Can't play Tic Tac Toe with board size less than 3")
+            N = input("Enter Size of Tic-Tac-Toe Grid: ")
+
+    def transition(self, action):
+        T, board, actions = self.gameState
+        newT, newBoard, newActions = (T+1)%2, copy.deepcopy(board), list(actions)
+        randAction = None
+        if(np.random.random() < P): #Random action selected
+            randAction = np.random.choice([i for i in range(len(actions)) if actions[i]])
+        output(T, action, randAction) #Display action with player
+        if(randAction):
+            action = randAction
+        row, col = dcdAction(action)
+        newBoard[row][col] = T
+        newActions[action] = 0
+        return GameState(newT, newBoard, newActions)
+
+    def undo(self):
+        if(len(states) == 1):
+            raise("ERROR: Undo attempted but you have not taken any actions yet")
+        self.gameState = self.states.pop()
+
+    def run(self, agent):
+        if(self.gameState.T == 1):
+            print("CPU Turn: ")
+            #agent.printVals(self.gameState)
+            action = agent.getMove(self.gameState)
+        else:
+            print("Your Turn: ")
+            action = getAction(self.gameState.actions)
+        self.gameState = self.transition(action)
+
+    def __str__(self): #Overwrites toString()
+        s = ''
+        for row in range(N):
+            for col in range(N):
+                try:
+                    s += ('[' + str(players[self.gameState.board[row][col]]) + ']')
+                except:
+                    s += ('[' + str(row*N + col) + ']')
+            s += ('\n')
+        return s
+
+'''
+Abstract Computer Agent
+'''
+
 class Agent():
     def __init__(self):
         pass

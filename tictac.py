@@ -23,3 +23,25 @@ class TicTacToe():
         self.states = [self.gstate]
         self.n = n
         self.k = k
+
+    
+    #Taking action and gameState update
+
+    def transition(self, act):
+        acts,board,t  = self.gstate
+        Random_Action1 = None 
+        newt, newBoard, newActions = (T+1)%2, copy.deepcopy(board), list(actions)  
+        #Selecting Random Action      
+        if(np.random.random() < P): 
+            #Condition for Random Action     
+            Random_Action1 = np.random.choice([i for i in range(len(acts)) if acts[i]])
+        #Displaying action of the player
+        output(T, act, Random_Action1)
+        if(Random_Action1):
+            act = Random_Action1
+        r, c = dcdAction(act, self.n)
+        newBoard[r][c] = t
+        newActions[act] = 0
+        newState = GameState(newt, newBoard, newActions)
+        self.states.append(newState)
+        return newState

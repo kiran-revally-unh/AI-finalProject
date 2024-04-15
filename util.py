@@ -9,6 +9,14 @@ def undo(g):
 def reset(g):
     g.reset() #place in 
 cmds = {'h': help, 'u': undo, 'r': reset} # commands
+def displayActions(aa):
+    print("'X' can take  remaining boxes: ")
+    print([j for j, action in enumerate(aa) if action])
+def validCoord(csd, M):
+    r, c = csd
+    return(0 <= r < M and 0 <= c < M)
+def dcdAction(act, M):
+    return Coord(int(act/M), act%M)
 def reward(act):
     return 0
 def output(T, act, ract=None):
