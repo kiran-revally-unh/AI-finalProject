@@ -17,8 +17,57 @@ board   = [[-1] * N for _ in range(N)]    # Board representation
 qVals   = {}                              # Cache qVals
 vals    = {}                              # Vals of states
 
+def validCoord(coord):
+    row, col = coord
+    return(0 <= row < N and 0 <= col < N)
 
+'''
+Gets user input for player's turn
+'''
+def getAction(availableActions = actions):
+    print("'X' can take these remaining boxes: ")
+    print([i for i, action in enumerate(availableActions) if action])
+    action = int(input("Enter the ID of a remaining box: "))
+    while(availableActions[action] == 0):
+        print("ERROR: Invalid action. Try again: ")
+        action = int(input("Enter the ID of a remaining box: "))
+    return action
 
+'''
+Gets coords from user inputted action
+'''
+def dcdAction(action):
+    return Coord(int(action/N), action%N)
+
+'''
+Reward function for any action
+'''
+def reward(action):
+    return 0
+
+'''
+Output messages
+'''
+def output(T, action, randAction=None):
+    message = "Player " + str(players[T]) + " Selected Box #" + str(action)
+    if(randAction):
+        print(message + ", However a random box (Box #" + str(randAction) + ") was instead selected. The Probability of this happening during any move is: " + str(P))
+    else:
+        print(message)
+
+'''
+GameState Representation
+'''
+GameState = namedtuple('GameState', 'T board actions')
+
+'''
+Coord Representation
+'''
+Coord = namedtuple('Coord', 'Row Col')
+
+'''
+Game Functions
+'''
 class TicTacToe():
     def __init__(self):
         self.gameState = GameState(T, board, actions)
@@ -71,7 +120,6 @@ class TicTacToe():
 '''
 Abstract Computer Agent
 '''
-
 class Agent():
     def __init__(self):
         pass

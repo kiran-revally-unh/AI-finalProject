@@ -45,3 +45,14 @@ class TicTacToe():
         newState = GameState(newt, newBoard, newActions)
         self.states.append(newState)
         return newState
+
+    def undo(self):
+        if(len(self.states) < 2):
+            raise(Exception("ERROR: No actions taken, please undo the attempt"))
+        self.states.pop()
+        self.states.pop()
+        self.gameState = self.states[-1]
+
+    def reset(self):
+        self.gstate = getGameState(self.n)
+        self.states = [self.gstate]

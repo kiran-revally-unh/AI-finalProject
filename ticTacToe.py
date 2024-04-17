@@ -58,3 +58,11 @@ class State:
         # not the end
         self.isEnd = False
         return None
+    
+    def availablePositions(self):
+        positions = []
+        for i in range(BRD_RWS):
+            for j in range(BRD_CLS):
+                if self.board[i, j] == 0:
+                    positions.append((i, j))  # need to be tuple
+        return positions

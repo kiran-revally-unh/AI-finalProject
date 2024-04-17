@@ -98,3 +98,42 @@ class Agent():
                     V[str(newState)] = L * self.score(newState)
         print(V)
         return V
+    
+    
+class ExpectimaxAgent(Agent):
+    def __init__(self, K):
+        Agent.__init__(self, K)
+
+    def computeScore_1(self, gstate, Le, p, d, w, de=0):
+        bestScore, optim = w, min
+        if(gameState.T == 0):
+            bestScore, optim = -bestScore, max
+        accum = 0
+        actions = gameState.actions
+        for i, action in enumerate(actions):
+            if action:
+                newState = self.update(gameState, i)
+                newScore = reward(action) + Le*self.score(newState, Le, p, d, w, de+1)
+                accum += newScore
+                bestScore = optim(bestScore, newScore)
+        totalScore = ((1.0-p)*bestScore + (p)*(accum/sum(actions)))
+        vals[str(gameState)] = totalScore
+        return totalScore
+
+class MinimaxAgent(Agent):
+    def __init__(self, A):
+        Agent.__init__(self, A)
+
+    def computeScore_1(self, gstate, Le, p, d, w, de=0):
+
+        bestScore, optim = w, min
+        if(gstate.T == 0):
+            bestScore, optim = -bestScore, max
+        actions = gstate.actions
+        for i, action in enumerate(actions):
+            if action:
+                newState = self.update(gstate, i)
+                newScore = reward(action) + L*self.score(newState, Le, p, d, w, de+1)
+                bestScore = optim(bestScore, newScore)
+        values[str(gstate)] = bestScore
+        return bestScore

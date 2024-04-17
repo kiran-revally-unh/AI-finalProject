@@ -25,3 +25,8 @@ def output(T, act, ract=None):
         print(mess + ", However a random box (Box #" + str(ract) + ")  instead selected. Probability  happening during any move is: " + str(T))
     else:
         print(mess)
+def handleInput(game, validatedInput):
+    try:
+        game.gameState = game.transition(int(validatedInput))
+    except:
+        cmds[validatedInput](game)
