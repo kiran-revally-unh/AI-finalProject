@@ -98,8 +98,7 @@ class Agent():
                     V[str(newState)] = L * self.score(newState)
         print(V)
         return V
-    
-    
+
 class ExpectimaxAgent(Agent):
     def __init__(self, K):
         Agent.__init__(self, K)
@@ -137,3 +136,117 @@ class MinimaxAgent(Agent):
                 bestScore = optim(bestScore, newScore)
         values[str(gstate)] = bestScore
         return bestScore
+
+class MinimaxAlphaBeta(Agent):
+    def __init__(self, A):
+        Agent.__init__(self, A)
+
+    def computeScore_1(self, gstate, Le, p, d, w, de, alpha=float('-inf'), beta=float('inf')):
+        actions = gstate.actions
+        if(de==d or sum(actions)==0): return 0
+        if(gstate.T == 0): #Maximize the Agent
+            bestScore = -w
+            for i, action in enumerate(actions):
+                if(action):
+                    newState = self.update(gstate, i)
+                    newScore = reward(action) + Le+self.computeScore_1(newState, Le, p, d, w, de+1, alpha, beta)
+                    bestScore = max(bestScore, newScore)
+                    alpha = max(alpha, newScore)
+                    if(alpha > beta): break
+        else: #Minimize the Agent
+            bestScore = w
+            for i, action in enumerate(actions):
+                if(action):
+                    newState = self.update(gstate, i)
+                    newScore = reward(action) + Le*self.computeScore_1(nstate, Le, p, d, w, de+1, alpha, beta)
+                    bestScore = min(bestScore, newScore)
+                    beta = min(newScore, beta)
+                    if(alpha > beta): break
+        values[str(gstate)] = bestScore
+        return bestScore
+
+
+
+class Learner(A_B_C):
+
+    def __init__(self, al, ga, eps, ep_decay=0.):
+        # Agent parameter we are entering
+        self.al = al
+        self.ga = ga
+        self.eps = eps
+        self.ep_decay = ep_decay
+        # Possible actions for x,y coordinate pairs
+        self.actions = []
+        for i in range(3):
+            for j in range(3):
+                self.actions.append((i,j))
+        # Initializing 0 to Q for state-action.
+        # Accessing action a, state s values via Q[a][s]
+        self.Q = {}
+        for action in self.actions:
+            self.Q[action] = collections.defaultdict(int)
+        # Keeping a list of reward 
+        self.rewards = []
+
+    def get_action(self, s):
+
+        # Only allowed actions (empty space)
+        possibleactions1 = [a for a in self.actions if s[a[0]*3 + a[1]] == '-']
+        if random.random() < self.eps:
+            # Random Choosing action.
+            action_1 = possibleactions1[random.randint(0,len(possibleactions1)-1)]
+        else:
+            # Greedy choosing action.
+            values_1 = np.array([self.Q[a][s] for a in possibleactions1])
+            # Finding the maximum loc
+            ix_max = np.where(values_1 == np.max(values_1))[0]
+            if len(ix_max) > 1:
+                # Sample when multiple actions are maximum
+                ab_select = np.random.choice(ix_max, 1)[0]
+            else:
+                # If unique max action, select that one
+                ab_select = ix_max[0]
+            action_1 = possibleactions1[ab_select]
+
+        # update epsilon; geometric decay
+        self.eps *= (1.-self.ep_decay)
+
+        return action_1
+
+    def save(self, path):
+        """ To save the state of agent we are Pickling the object instance . """
+        if os.path.isfile(path):
+            os.remove(path)
+        f = open(path, 'wb')
+        pickle.dump(self, f)
+        f.close()
+
+    @abstractmethod
+    def update(self, s, s_, a, a_, r):
+        pass
+
+class Qlearner(agent):
+    """
+    Implementing Q-learner agent.
+    """
+    def _init_(self, al, ga, eps, ep_decay=0.):
+        super()._init_(al, ga, eps, ep_decay)
+
+    def update(self, s, s_, a, a_, r):
+
+        # Updating the Q(s,a)
+        if s_ is not None:
+            # To hold the list of Q values of all a_,s_ pairs, we will later access the maximum
+            possibleactions1 = [act for act in self.acts if s_[act[0]*3 + act[1]] == '-']
+            Q_options = [self.Q[action][s_] for act in possibleactions1]
+            # updatting Q
+            self.Q[a][s] += self.al*(r + self.gamma*max(Q_options) - self.Q[a][s])
+        else:
+            # We update the terminal state
+            self.Q[a][s] += self.al*(r - self.Q[a][s])
+
+        # adding r to the list named as reward
+        self.rewards.append(r)
+
+
+

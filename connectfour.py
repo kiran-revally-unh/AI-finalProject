@@ -237,3 +237,78 @@ class Agent():
 '''
 Expectimax Computer Agent
 '''
+class ExpectimaxAgent(Agent):
+    def __init__(self):
+        Agent.__init__(self)
+
+    def qScore(self, gameState, action):
+        qState = str(gameState) + str(action)
+        if qState in qVals:
+            return qVals[qState]
+        s = reward(action)
+        for state, prob in self.transition(gameState, action):
+            s += L * prob * self.score(state)
+        qVals[qState] = s
+        return s
+
+    def score(self, gameState, d=0):
+        '''
+        If the score for a gameState has already been computed, fetch
+        '''
+        if(str(gameState) in vals):
+            return vals[str(gameState)]
+
+        '''
+        Check if the game has been won, if so return appropriate value
+        '''
+        won, winner = self.check(gameState)
+        if(won):
+            vals[str(gameState)] = W if(winner==0) else -W #Win Score
+            return vals[str(gameState)]
+
+        '''
+        Check if the depth search limit has been reached, or if there
+        are no valid actions left. If so, return 0
+        '''
+        actions = gameState.actions
+        if(sum(actions)==0 or d==D):
+            vals[str(gameState)] = 0
+            return 0
+
+        '''
+        Last resort: Compute the score of the Game State
+        '''
+        bestScore, optim = W, min
+        if(gameState.T == 0):
+            bestScore, optim = -bestScore, max
+        accum = 0
+        for i, action in enumerate(actions):
+            if action:
+                newState = self.update(gameState, i)
+                newScore = reward(action) + L*self.score(newState, d+1)
+                accum += newScore
+                bestScore = optim(bestScore, newScore)
+        totalScore = ((1.0-P)*bestScore + (P)*(accum/sum(actions)))
+        vals[str(gameState)] = L*totalScore
+        return totalScore
+
+class MinimaxAgent(Agent):
+    def __init__(self):
+        pass
+
+
+if(__name__ == "__main__"):
+    game = TicTacToe()
+    print(game)
+    agent = ExpectimaxAgent()
+    won, winner = False, None
+    while(not(won) and sum(game.gameState.actions) > 0):
+        game.run(agent)
+        won, winner = agent.check(game.gameState)
+        print(game)
+    if(not won): #Tie
+        print("Stalemate.")
+    elif(winner == 0): #Player Won
+        print("Victory is Yours!!!")
+    else:              #CPU Won
+        print("FOOLISH MORTAL. TRY HARDER NEXT TIME.")

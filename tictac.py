@@ -56,3 +56,26 @@ class TicTacToe():
     def reset(self):
         self.gstate = getGameState(self.n)
         self.states = [self.gstate]
+
+#Overwriting to a String
+    def __str__(self): 
+        n = self.n
+        cw = 1
+        for r in range(n):
+            for c in range(n):
+                cw = max(cw, len(str(r*n + c)))
+        s_s = ''
+        for r in range(n):
+            for c in range(n):
+                try:
+                    nd = len(str(self.gstate.board[r][c]))
+                    ns, rem = (cw-nd)//2, (cw-nd)%2
+                    player = str(players[self.gstate.board[r][c]])
+                    s_s += ('[' + ns*' ' + player + ns*' ' + rem*' ' + ' ] ')
+                except:
+                    cn = r*n + c
+                    nd = len(str(cn))
+                    ns, rem = (cw-nd)//2, (cw-nd)%2
+                    s_s += ('[' + ns*' ' + str(cn) + ns*' ' + rem*' ' + ']')
+            s_s += ('\n')
+        return s_s

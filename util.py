@@ -25,8 +25,31 @@ def output(T, act, ract=None):
         print(mess + ", However a random box (Box #" + str(ract) + ")  instead selected. Probability  happening during any move is: " + str(T))
     else:
         print(mess)
+def getInput(g):
+    availableActions = g.gameState.actions
+    displayActions(availableActions) #Output to terminal
+    h, r, u = cmds['h'], cmds['r'], cmds['u']
+    userInput = int(input("Enter a command or the ID of a remaining box: "))
+    while(not validateInput(g, userInput)):
+        print("ERROR: Invalid input. Try again: ")
+        action = int(input("Enter the ID of a remaining box: "))
+    return userInput
+def validateInput(game, input):
+    try:
+        input = int(input) #Check if valid action
+        N = game.N
+        return(0 <= input < N*N and game.gameState.actions[input])
+    except:
+        return(input in cmds) #Check if valid command
 def handleInput(game, validatedInput):
     try:
         game.gameState = game.transition(int(validatedInput))
     except:
         cmds[validatedInput](game)
+def getGameState(N):
+    T       = 0
+    board   = [[-1] * N for _ in range(N)]
+    actions = [1] * (N*N)
+    return GameState(T, board, actions)
+GameState = namedtuple('GameState', 'T board actions')
+Coord = namedtuple('Coord', 'Row Col')
