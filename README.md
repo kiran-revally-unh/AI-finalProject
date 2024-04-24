@@ -1,4 +1,4 @@
-
+0DC64AC3-411B-494D-B3BB-6BE4A89FB771.jpg
 # X-s-O-s
 
 The submitted file is for the Term Project for the course Introduction to Artificial Intelligence Spring 2024. The group members for this project are kiran Revally.
