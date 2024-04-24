@@ -1,4 +1,5 @@
-0DC64AC3-411B-494D-B3BB-6BE4A89FB771.jpg
+![0DC64AC3-411B-494D-B3BB-6BE4A89FB771](https://github.com/kiran-revally-unh/AI-finalProject/assets/147097894/58d44a0b-0ada-463c-bffa-60d39f15875c)
+
 # X-s-O-s
 
 The submitted file is for the Term Project for the course Introduction to Artificial Intelligence Spring 2024. The group members for this project are kiran Revally.
